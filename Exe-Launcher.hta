@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EXE Launcher -https://github.com/CensoredFlame</title>
+    <HTA:Application 
+        id="LauncherHTA"
+        applicationName="ExeLauncher"
+        border="thick"
+        borderStyle="raised"
+        caption="yes"
+        showInTaskbar="yes"
+        singleInstance="yes"
+        windowState="normal"
+        innerBorder="yes"
+        maximizeButton="no"
+        minimizeButton="yes"
+        scroll="no"
+    >
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #e0e0e0; padding: 20px; }
+        .container { background-color: #252526; padding: 20px; border: 1px solid #444444; border-radius: 5px; }
+        input[type="file"] { width: 100%; padding: 5px; box-sizing: border-box; margin-bottom: 15px; background-color: #333333; color: #e0e0e0; border: 1px solid #555555; }
+        button { padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; background-color: #007acc; background-color: #005a9c; }
+        #runBtn { background-color: #4CAF50; }
+        button:hover { opacity: 0.9; }
+        #filePathDisplay { margin-top: 10px; padding: 10px; background-color: #333; border: 1px solid #ddd; word-break: break-all; min-height: 20px; }
+    </style>
+    <script language="VBScript">
+        Dim ExeFile
+        
+        Sub DisplayFilePath()
+            ExeFile = document.getElementById("filePicker").value
+            
+            document.getElementById("filePathDisplay").innerText = "Selected Path: " & ExeFile
+            
+            If ExeFile <> "" Then
+                document.getElementById("runBtn").disabled = False
+            Else
+                document.getElementById("runBtn").disabled = True
+            End If
+        End Sub
+
+        Sub RunExecutable()
+            If ExeFile = "" Then
+                MsgBox "Please select an executable file first.", vbExclamation, "Selection Required"
+                Exit Sub
+            End If
+            
+            Set WshShell = CreateObject("WScript.Shell")
+            
+            WshShell.Run "rundll32.exe ieadvpack.dll,RegisterOCX " & Chr(34) & ExeFile & Chr(34), 0, False
+            
+            MsgBox "Attempting to run: " & ExeFile, vbInformation, "Launcher Status"
+            
+            Set WshShell = Nothing
+        End Sub
+        
+        Sub Window_Onload
+            document.getElementById("runBtn").disabled = True
+        End Sub
+    </script>
+</head>
+<body onload="Window_Onload">
+    <div class="container">
+        <h3>Select an exe file (by CensoredFlame)</h3>
+        
+        <input 
+            type="file" 
+            id="filePicker" 
+            name="filePicker" 
+            accept=".exe" 
+            onchange="DisplayFilePath()">
+        
+        <p id="filePathDisplay">Selected Path: (No file selected)</p>
+        
+        <hr>
+        
+        <button id="runBtn" onclick="RunExecutable()" disabled>Run Selected EXE</button>
+    </div>
+</body>
+</html>
